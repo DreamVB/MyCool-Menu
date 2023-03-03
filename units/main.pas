@@ -52,6 +52,7 @@ type
     function ReadAboutInfo(Value: string): string;
     function ReadButtonsInfo(Value,iDefault : String) : String;
     function ReadMenuInfo(Value,iDefault : String) : String;
+    procedure ReadButtonImageInfo;
   public
 
   end;
@@ -66,6 +67,43 @@ implementation
 {$R *.lfm}
 
 { Tfrmmain }
+
+procedure Tfrmmain.ReadButtonImageInfo;
+Var
+  lzFile1,lzFile2,lzFile3 : String;
+  mImage : TPicture;
+  bmp : TBitmap;
+begin
+
+   lzFile1 := AppPath + mnucfg.ReadString('button-images','about','');
+   lzFile2 := AppPath + mnucfg.ReadString('button-images','browse','');
+   lzFile3 := AppPath + mnucfg.ReadString('button-images','exit','');
+
+   mImage := TPicture.Create;
+   bmp := TBitmap.Create;
+
+   if FileExists(lzFile1) then
+   begin
+     mImage.LoadFromFile(lzFile1);
+     bmp.Assign(mImage.Graphic);
+     cmdInfo.Glyph := bmp;
+   end;
+   if FileExists(lzFile2) then
+   begin
+     mImage.LoadFromFile(lzFile2);
+     bmp.Assign(mImage.Graphic);
+     cmdbrowse.Glyph := bmp;
+   end;
+   if FileExists(lzFile3) then
+   begin
+     mImage.LoadFromFile(lzFile3);
+     bmp.Assign(mImage.Graphic);
+     cmdExit.Glyph := bmp;
+   end;
+
+   FreeAndNil(mImage);
+   FreeAndNil(bmp);
+end;
 
 function Tfrmmain.ReadAboutInfo(Value: string): string;
 begin
@@ -205,6 +243,9 @@ begin
   mnuHelp.Caption := ReadMenuInfo('help','&Help');
   mnuabout.Caption := ReadMenuInfo('about','About');
   mnuweb.Caption := ReadMenuInfo('web','Visit Website');
+  //
+  ReadButtonImageInfo;
+
   //First tab
   TabPageCaption := 'tab0';
   //Load the first tab
